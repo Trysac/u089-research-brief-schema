@@ -1,21 +1,36 @@
-"""Typed contracts and a dependency-free validator for research briefs and monitored topics, with cross-field rules and JSON Schema 2020-12 export"""
+"""Typed contracts and a dependency-free validator for research briefs and monitored topics.
+
+The package validates JSON-like documents against two contracts (research briefs and topics
+files), enforces cross-field rules that plain JSON Schema cannot express and exports a
+JSON Schema 2020-12 description for other languages.
+"""
 
 from __future__ import annotations
 
-__all__ = ["__version__", "normalize"]
+import logging
+
+from .errors import ContractError, ErrorCode, FieldError
+from .models import SCHEMA_VERSION, Finding, ResearchBrief, Source, Topic, TopicsFile, to_dict
+from .schema import json_schema
+from .validator import validate_brief, validate_topics
+
+__all__ = [
+    "SCHEMA_VERSION",
+    "ContractError",
+    "ErrorCode",
+    "FieldError",
+    "Finding",
+    "ResearchBrief",
+    "Source",
+    "Topic",
+    "TopicsFile",
+    "__version__",
+    "json_schema",
+    "to_dict",
+    "validate_brief",
+    "validate_topics",
+]
 
 __version__ = "0.1.0"
 
-
-def normalize(value: str) -> str:
-    """Return ``value`` trimmed and lower-cased.
-
-    Placeholder API created by the template: replace it with the utility's real behavior.
-
-    Raises:
-        ValueError: if ``value`` is empty or only whitespace.
-    """
-    cleaned = value.strip()
-    if not cleaned:
-        raise ValueError("value must not be empty")
-    return cleaned.lower()
+logging.getLogger(__name__).addHandler(logging.NullHandler())
