@@ -1,0 +1,1 @@
+{"schema_version":"1.0","topics":[{"id":"solid-state-batteries","name":"Solid-state batteries","keywords":["solid-state","battery"],"exclude_keywords":["toy"],"cadence":"weekly","priority":3,"active":true},{"id":"grid-storage","name":"Grid storage","keywords":["grid","storage"],"exclude_keywords":[],"cadence":"daily","priority":5,"active":false}]}

@@ -8,8 +8,10 @@ Typed contracts and a dependency-free validator for research briefs and monitore
 
 ## Problem
 
-Describe in two or three sentences the concrete problem this utility solves, who hits it, and what
-they do today without it. Replace this paragraph when the first real feature lands.
+Pipelines that research topics and hand results to writers or agents exchange JSON documents whose
+shape drifts between producer and consumer. Plain JSON Schema catches types but not rules such as
+"every finding must cite an existing source". This library gives every stage the same typed contract,
+a complete list of errors per document, and an exported schema for other languages.
 
 ## Install
 
@@ -24,17 +26,28 @@ Requires Python 3.10 or newer. No runtime dependencies.
 ## Usage
 
 ```python
-import research_brief_schema
+import json
 
-# normalize() trims surrounding whitespace and lower-cases the text.
-print(research_brief_schema.normalize("  Hello World "))  # -> "hello world"
+from research_brief_schema import ContractError, json_schema, to_dict, validate_brief
 
-# Blank input is rejected explicitly instead of returning an empty string.
+with open("tests/golden/research_brief.json", encoding="utf-8") as fh:
+    doc = json.load(fh)
+
 try:
-    research_brief_schema.normalize("   ")
-except ValueError as exc:
-    print(f"rejected: {exc}")
+    brief = validate_brief(doc)
+    print(brief.title, brief.uncited_sources)
+    print(to_dict(brief) == doc)
+except ContractError as exc:
+    for error in exc.errors:
+        print(error.path, error.code, error.message)
+
+schema = json_schema("research-brief")
+print(schema["$schema"])  # https://json-schema.org/draft/2020-12/schema
 ```
+
+The golden schemas are in [tests/golden/research-brief.schema.json](tests/golden/research-brief.schema.json)
+and [tests/golden/topics.schema.json](tests/golden/topics.schema.json). Cross-field rules (unique ids,
+evidence references, disjoint keywords) cannot be expressed in JSON Schema; only the validator enforces them.
 
 ## Documentation
 
